@@ -110,6 +110,18 @@ class mainApplication(QMainWindow):
         
         self.queryList.append(self.queryField.text())
         self.queryField.setText('')
+        
+        
+    
+    def clickSelectDynamicIndexButton(self):
+        self.dynamicIndex.setChecked(True)
+        self.tPIndex.setChecked(False)
+    
+    
+    
+    def clickSelectTPIndexButton(self):
+        self.tPIndex.setChecked(True)
+        self.dynamicIndex.setChecked(False)
 
     
     
@@ -172,29 +184,52 @@ class mainApplication(QMainWindow):
         
         menuBarSearchFromWidget = QWidget(self.menuBar)
         menuBarSearchFromWidget.setObjectName('subContainerWidget')
-        menuBarSearchFromWidget.setFixedSize(180, 100)
-        menuBarSearchFromWidget.move(10, 250)
+        menuBarSearchFromWidget.setFixedSize(180, 70)
+        menuBarSearchFromWidget.move(10, 130)
         menuBarSearchFromLabel = QLabel(menuBarSearchFromWidget)
         menuBarSearchFromLabel.setObjectName('subContainerLabel')
-        menuBarSearchFromLabel.setText("Search from...")
-        menuBarSearchFromLabel.move(10, 10)
-        
+        menuBarSearchFromLabel.setText("Search from")
+        menuBarSearchFromLabel.move(10, 5)
         self.fromDirectory = QPushButton(menuBarSearchFromWidget)
         self.fromDirectory.setObjectName('defaultButton')
         self.fromDirectory.setFixedHeight(20)
-        self.fromDirectory.setMaximumWidth(180)
         self.fromDirectory.move(10, 40)
-        self.fromDirectory.setText('All files in a specific directory')
+        self.fromDirectory.setText('DIRECTORY')
         self.fromDirectory.setCheckable(True)
         self.fromDirectory.clicked.connect(self.clickSelectFromDirectoryButton)
         self.fromFiles = QPushButton(menuBarSearchFromWidget)
         self.fromFiles.setObjectName('defaultButton')
         self.fromFiles.setFixedHeight(20)
         self.fromFiles.setMaximumWidth(180)
-        self.fromFiles.move(10, 70)
-        self.fromFiles.setText('A set of selected files')
+        self.fromFiles.move(80, 40)
+        self.fromFiles.setText('FILES')
         self.fromFiles.setCheckable(True)
         self.fromFiles.clicked.connect(self.clickSelectFromFilesButton)
+        
+        menuBarIndexingWidget = QWidget(self.menuBar)
+        menuBarIndexingWidget.setObjectName('subContainerWidget')
+        menuBarIndexingWidget.setFixedSize(180, 70)
+        menuBarIndexingWidget.move(10, 220)
+        menuBarIndexingLabel = QLabel(menuBarIndexingWidget)
+        menuBarIndexingLabel.setObjectName('subContainerLabel')
+        menuBarIndexingLabel.setText("Indexing type")
+        menuBarIndexingLabel.move(10, 5)
+        self.dynamicIndex = QPushButton(menuBarIndexingWidget)
+        self.dynamicIndex.setObjectName('defaultButton')
+        self.dynamicIndex.setFixedHeight(20)
+        self.dynamicIndex.move(10, 40)
+        self.dynamicIndex.setText('DYNAMIC')
+        self.dynamicIndex.setCheckable(True)
+        self.dynamicIndex.setChecked(True)
+        self.dynamicIndex.clicked.connect(self.clickSelectDynamicIndexButton)
+        self.tPIndex = QPushButton(menuBarIndexingWidget)
+        self.tPIndex.setObjectName('defaultButton')
+        self.tPIndex.setFixedHeight(20)
+        self.tPIndex.setMaximumWidth(180)
+        self.tPIndex.move(74, 40)
+        self.tPIndex.setText('T-PARTITIONED')
+        self.tPIndex.setCheckable(True)
+        self.tPIndex.clicked.connect(self.clickSelectTPIndexButton)
         
         self.errorLabel = QLabel(self)
         self.errorLabel.setObjectName('errorMessage')
