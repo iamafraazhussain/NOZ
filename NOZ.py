@@ -29,16 +29,12 @@ class mainApplication(QMainWindow):
         self.styleSheet = systemVariables.stylesheet
         self.setStyleSheet(self.styleSheet)
         
-        # backgroundWidget = QWidget(self)
         backgroundImage = QLabel(self)
         # backgroundImage.setObjectName('backgroundImage')
         backgroundImagePixmap = QPixmap(f'{self.currentDirectory}\\Images\\Wallpaper.png')
         backgroundImage.setPixmap(backgroundImagePixmap)
         backgroundImage.resize(backgroundImagePixmap.width(), backgroundImagePixmap.height())
         backgroundImage.move(0, 0)
-        # backgroundImageBlur = QGraphicsBlurEffect()
-        # backgroundImageBlur.setBlurRadius(10)
-        # backgroundImage.setGraphicsEffect(backgroundImageBlur)
         
         self.createMainWidgets()
     
@@ -54,6 +50,9 @@ class mainApplication(QMainWindow):
         self.listOfFiles = []
         self.queryList = []
         self.filesPresent = False
+        
+        self.holdTimer = QTimer()
+        self.holdTimer.setInterval(2500)
     
     
     
@@ -70,7 +69,7 @@ class mainApplication(QMainWindow):
                 self.listOfFiles.append(file)
             print(file)
         if len(self.listOfFiles) == 0:
-            print("No files were found in the given directory!")
+            self.showErrorMessage("No files were found in the given directory")
             self.filesPresent = False
             self.fromDirectory.setChecked(False)
         else:
@@ -88,7 +87,7 @@ class mainApplication(QMainWindow):
                 self.listOfFiles.append(file)
             print(file)
         if len(self.listOfFiles) == 0:
-            print("None of the files matched the requirements")
+            self.showErrorMessage("None of the files had the supportd file type")
             self.filesPresent = False
             self.fromFiles.setChecked(False)
         else:
@@ -99,16 +98,33 @@ class mainApplication(QMainWindow):
     
     
     def clickSearchButton(self):
-        ...
+        
+        if len(self.queryList) == 0:
+            self.showErrorMessage('Please enter a query to search for')
+        elif not self.filesPresent:
+            self.showErrorMessage('Please select the files you would like to search from')
     
     
     
     def clickAddToQueryButton(self):
         
         self.queryList.append(self.queryField.text())
-        print(self.queryList)
         self.queryField.setText('')
 
+    
+    
+    
+    
+    
+    def showErrorMessage(self, message, color = '#FF4010'):    
+        
+        self.errorLabel.setText(message)
+        self.errorLabel.setStyleSheet(f'background-color: {color};')
+        self.errorLabel.setVisible(True)
+        self.holdTimer.timeout.connect(lambda: self.errorLabel.setHidden(True))
+        self.holdTimer.timeout.connect(self.holdTimer.stop)
+        self.holdTimer.start()
+    
     
     
     
@@ -180,6 +196,13 @@ class mainApplication(QMainWindow):
         self.fromFiles.setCheckable(True)
         self.fromFiles.clicked.connect(self.clickSelectFromFilesButton)
         
+        self.errorLabel = QLabel(self)
+        self.errorLabel.setObjectName('errorMessage')
+        self.errorLabel.setFixedSize(300, 20)
+        self.errorLabel.move((((systemVariables.appDimension[0] - (200 + 40)) - 300) // 2) + 200 + 40, 10)
+        self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.errorLabel.setHidden(True)
+        
         self.queryWidgetSize = [(systemVariables.appDimension[0] - (200 + 40 + 100)), 30]
         queryWidget = QWidget(self)
         queryWidget.setObjectName('mainContainerWidget')
@@ -191,6 +214,7 @@ class mainApplication(QMainWindow):
         self.adaptiveQueryButton.setText('SEARCH')
         self.adaptiveQueryButton.setFixedWidth(70)
         self.adaptiveQueryButton.move(self.queryWidgetSize[0] - (self.adaptiveQueryButton.width() + 5), 5)
+        self.adaptiveQueryButton.clicked.connect(self.clickSearchButton)
         self.queryField = QLineEdit(queryWidget)
         self.queryField.setObjectName('mainContainerWidget')
         self.queryField.setFixedSize(self.queryWidgetSize[0] - self.adaptiveQueryButton.width() - 20, 30)
