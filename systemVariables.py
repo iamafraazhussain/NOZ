@@ -37,7 +37,7 @@ class systemVariables:
 
     #subContainerWidget
     {
-        border-radius: 10px;        
+        border-radius: 10px;
     }
     
     
@@ -83,10 +83,18 @@ class systemVariables:
         font-family: 'Nirmala UI';
         font-size: 9px;
         padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
         color: #333333;
     }
     
     #defaultButton:hover
+    {
+        background-color: #333333;
+        color: #f5f3e9;
+    }
+    
+    #defaultButton:checked
     {
         background-color: #333333;
         color: #f5f3e9;
