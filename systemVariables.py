@@ -91,4 +91,16 @@ class systemVariables:
         background-color: #333333;
         color: #f5f3e9;
     }
+    
+    
+    
+    #errorMessage
+    {
+        background-color: #FF4010;
+        border-radius: 10px;
+        font-family: 'Nirmala UI';
+        font-size: 10px;
+        padding: 5px;
+        color: #f5f3e9;
+    }
     '''
