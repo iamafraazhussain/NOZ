@@ -42,6 +42,16 @@ class systemVariables:
     
     
     
+    #scrollableWidget
+    {
+        background-color: rgba(0, 0, 0, 0);
+        border-color: rgba(0, 0, 0, 0);
+        border-width: 0px;
+        border-radius: 10px;
+    }
+    
+    
+    
     #subContainerLabel
     {
         color: #050505;
@@ -81,7 +91,7 @@ class systemVariables:
         background-color: #e9e2d7;
         border-radius: 10px;
         font-family: 'Nirmala UI';
-        font-size: 9px;
+        font-size: 10px;
         padding: 5px;
         padding-left: 10px;
         padding-right: 10px;
@@ -98,6 +108,20 @@ class systemVariables:
     {
         background-color: #333333;
         color: #f5f3e9;
+    }
+    
+    
+    
+    #queryContainer
+    {
+        background-color: #333333;
+        border-radius: 10px;
+        font-family: 'Nirmala UI';
+        font-size: 9px;
+        padding: 5px;
+        padding-left: 25px;
+        padding-right: 10px;
+        color: #e9e2d7;
     }
     
     
