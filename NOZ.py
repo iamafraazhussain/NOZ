@@ -301,6 +301,7 @@ class mainApplication(QMainWindow):
                 currentQuery.setFixedHeight(20)
                 currentQuery.setMaximumWidth(160)
                 currentQuery.setText(query)
+                currentQuery.setToolTip(query)
                 currentQueryButton = QPushButton(currentQuery)
                 currentQueryButton.setObjectName('defaultButton')
                 currentQueryButton.setStyleSheet('padding-left: None; padding-right: None; padding: Npne; font-size: 6px; font-weight: 500; border-radius: 5px;')
