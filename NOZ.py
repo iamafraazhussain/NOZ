@@ -280,6 +280,7 @@ class mainApplication(QMainWindow):
         self.queryField.move(5, 0)
         self.queryField.setPlaceholderText('Type your query here...')
         self.queryField.textChanged.connect(self.queryFieldChangeEvent)
+        self.queryField.setFocus()
     
     
     
@@ -287,23 +288,27 @@ class mainApplication(QMainWindow):
         
         self.menuBarQueryListScrollableWidget = QWidget(self.menuBarQueryListWidget)
         self.menuBarQueryListScrollableWidget.setObjectName('scrollableWidget')
-        self.menuBarQueryListScrollableArea.setFixedHeight(160)
+        self.menuBarQueryListScrollableArea.setFixedHeight(140)
         self.menuBarQueryListLayout = QVBoxLayout()
         self.menuBarQueryListLayout.setContentsMargins(10, 0, 10, 5)
         
         if len(self.queryList) > 0:
             for index, query in enumerate(self.queryList):
-                currentQuery = QLabel(self.menuBarQueryListScrollableArea)
+                currentQueryContainer = QWidget(self.menuBarQueryListScrollableArea)
+                currentQueryContainer.setFixedSize(160, 20)
+                currentQuery = QLabel(currentQueryContainer)
                 currentQuery.setObjectName('queryContainer')
                 currentQuery.setFixedHeight(20)
                 currentQuery.setMaximumWidth(160)
                 currentQuery.setText(query)
                 currentQueryButton = QPushButton(currentQuery)
                 currentQueryButton.setObjectName('defaultButton')
-                currentQueryButton.setFixedSize(20, 20)
-                currentQueryButton.setText('X')
+                currentQueryButton.setStyleSheet('padding-left: None; padding-right: None; padding: Npne; font-size: 6px; font-weight: 500; border-radius: 5px;')
+                currentQueryButton.setFixedSize(10, 10)
+                currentQueryButton.move(5, 5)
+                currentQueryButton.setText('✕')
                 currentQueryButton.clicked.connect(lambda checked, argument = index: self.clickDeleteQueryButton(argument))
-                self.menuBarQueryListLayout.addWidget(currentQuery)
+                self.menuBarQueryListLayout.addWidget(currentQueryContainer)
             
         else:
             currentQuery = QLabel(self.menuBarQueryListScrollableArea)
