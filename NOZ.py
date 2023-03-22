@@ -110,6 +110,8 @@ class mainApplication(QMainWindow):
         
         self.queryList.append(self.queryField.text())
         self.queryField.setText('')
+        self.createQueryList()
+        self.queryField.setFocus()
         
         
     
@@ -122,6 +124,12 @@ class mainApplication(QMainWindow):
     def clickSelectTPIndexButton(self):
         self.tPIndex.setChecked(True)
         self.dynamicIndex.setChecked(False)
+    
+    
+    
+    def clickDeleteQueryButton(self, index):
+        self.queryList.pop(index)
+        self.createQueryList()
 
     
     
@@ -184,7 +192,7 @@ class mainApplication(QMainWindow):
         
         menuBarSearchFromWidget = QWidget(self.menuBar)
         menuBarSearchFromWidget.setObjectName('subContainerWidget')
-        menuBarSearchFromWidget.setFixedSize(180, 70)
+        menuBarSearchFromWidget.setFixedSize(180, 65)
         menuBarSearchFromWidget.move(10, 130)
         menuBarSearchFromLabel = QLabel(menuBarSearchFromWidget)
         menuBarSearchFromLabel.setObjectName('subContainerLabel')
@@ -193,7 +201,7 @@ class mainApplication(QMainWindow):
         self.fromDirectory = QPushButton(menuBarSearchFromWidget)
         self.fromDirectory.setObjectName('defaultButton')
         self.fromDirectory.setFixedHeight(20)
-        self.fromDirectory.move(10, 40)
+        self.fromDirectory.move(10, 35)
         self.fromDirectory.setText('DIRECTORY')
         self.fromDirectory.setCheckable(True)
         self.fromDirectory.clicked.connect(self.clickSelectFromDirectoryButton)
@@ -201,15 +209,15 @@ class mainApplication(QMainWindow):
         self.fromFiles.setObjectName('defaultButton')
         self.fromFiles.setFixedHeight(20)
         self.fromFiles.setMaximumWidth(180)
-        self.fromFiles.move(80, 40)
+        self.fromFiles.move(89, 35)
         self.fromFiles.setText('FILES')
         self.fromFiles.setCheckable(True)
         self.fromFiles.clicked.connect(self.clickSelectFromFilesButton)
         
         menuBarIndexingWidget = QWidget(self.menuBar)
         menuBarIndexingWidget.setObjectName('subContainerWidget')
-        menuBarIndexingWidget.setFixedSize(180, 70)
-        menuBarIndexingWidget.move(10, 220)
+        menuBarIndexingWidget.setFixedSize(180, 65)
+        menuBarIndexingWidget.move(10, 205)
         menuBarIndexingLabel = QLabel(menuBarIndexingWidget)
         menuBarIndexingLabel.setObjectName('subContainerLabel')
         menuBarIndexingLabel.setText("Indexing type")
@@ -217,7 +225,7 @@ class mainApplication(QMainWindow):
         self.dynamicIndex = QPushButton(menuBarIndexingWidget)
         self.dynamicIndex.setObjectName('defaultButton')
         self.dynamicIndex.setFixedHeight(20)
-        self.dynamicIndex.move(10, 40)
+        self.dynamicIndex.move(10, 35)
         self.dynamicIndex.setText('DYNAMIC')
         self.dynamicIndex.setCheckable(True)
         self.dynamicIndex.setChecked(True)
@@ -226,10 +234,26 @@ class mainApplication(QMainWindow):
         self.tPIndex.setObjectName('defaultButton')
         self.tPIndex.setFixedHeight(20)
         self.tPIndex.setMaximumWidth(180)
-        self.tPIndex.move(74, 40)
+        self.tPIndex.move(80, 35)
         self.tPIndex.setText('T-PARTITIONED')
         self.tPIndex.setCheckable(True)
         self.tPIndex.clicked.connect(self.clickSelectTPIndexButton)
+        
+        self.menuBarQueryListWidget = QWidget(self.menuBar)
+        self.menuBarQueryListWidget.setObjectName('subContainerWidget')
+        self.menuBarQueryListWidget.setFixedWidth(180)
+        self.menuBarQueryListWidget.setMaximumHeight(170)
+        self.menuBarQueryListWidget.move(10, 275)
+        menuBarQueryListLabel = QLabel(self.menuBarQueryListWidget)
+        menuBarQueryListLabel.setObjectName('subContainerLabel')
+        menuBarQueryListLabel.setText("Your queries")
+        menuBarQueryListLabel.move(10, 5)
+        self.menuBarQueryListScrollableArea = QScrollArea(self.menuBarQueryListWidget)
+        self.menuBarQueryListScrollableArea.setObjectName('scrollableWidget')
+        self.menuBarQueryListScrollableArea.setFixedWidth(180)
+        self.menuBarQueryListScrollableArea.setMaximumHeight(180)
+        self.menuBarQueryListScrollableArea.move(0, 35)
+        self.createQueryList()
         
         self.errorLabel = QLabel(self)
         self.errorLabel.setObjectName('errorMessage')
@@ -256,7 +280,44 @@ class mainApplication(QMainWindow):
         self.queryField.move(5, 0)
         self.queryField.setPlaceholderText('Type your query here...')
         self.queryField.textChanged.connect(self.queryFieldChangeEvent)
-
+    
+    
+    
+    def createQueryList(self):
+        
+        self.menuBarQueryListScrollableWidget = QWidget(self.menuBarQueryListWidget)
+        self.menuBarQueryListScrollableWidget.setObjectName('scrollableWidget')
+        self.menuBarQueryListScrollableArea.setFixedHeight(160)
+        self.menuBarQueryListLayout = QVBoxLayout()
+        self.menuBarQueryListLayout.setContentsMargins(10, 0, 10, 5)
+        
+        if len(self.queryList) > 0:
+            for index, query in enumerate(self.queryList):
+                currentQuery = QLabel(self.menuBarQueryListScrollableArea)
+                currentQuery.setObjectName('queryContainer')
+                currentQuery.setFixedHeight(20)
+                currentQuery.setMaximumWidth(160)
+                currentQuery.setText(query)
+                currentQueryButton = QPushButton(currentQuery)
+                currentQueryButton.setObjectName('defaultButton')
+                currentQueryButton.setFixedSize(20, 20)
+                currentQueryButton.setText('X')
+                currentQueryButton.clicked.connect(lambda checked, argument = index: self.clickDeleteQueryButton(argument))
+                self.menuBarQueryListLayout.addWidget(currentQuery)
+            
+        else:
+            currentQuery = QLabel(self.menuBarQueryListScrollableArea)
+            currentQuery.setObjectName('defaultButton')
+            currentQuery.setFixedHeight(20)
+            currentQuery.setMaximumWidth(180)
+            currentQuery.setText('Add a query to begin...')
+            self.menuBarQueryListLayout.addWidget(currentQuery)
+            
+        self.menuBarQueryListScrollableWidget.setLayout(self.menuBarQueryListLayout)
+        self.menuBarQueryListScrollableArea.setWidget(self.menuBarQueryListScrollableWidget)
+        self.menuBarQueryListScrollableArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.menuBarQueryListScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        
 
 
 
