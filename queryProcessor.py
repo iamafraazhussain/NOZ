@@ -53,7 +53,7 @@ class dynamicIndex:
         documentID = len(self.documents)
         self.documents.append(document)
         
-        for term in document[0].split():
+        for term in document[1].split():
             self.invertedIndex[term].add(documentID)
     
     
@@ -66,6 +66,7 @@ class dynamicIndex:
         
         relevanceScores = collections.Counter()
         for document in relevantDocuments:
-            documentTerms = set(self.documents[document][0].split())
+            documentTerms = set(self.documents[document][1].split())
+            relevanceScores[document] = len(documentTerms & set(query.split()))
         
         return [(self.documents[document], score) for document, score in relevanceScores.most_common()]
