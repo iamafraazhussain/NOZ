@@ -127,7 +127,14 @@ class mainApplication(QMainWindow):
                 print("\n\n")
         
         else:
-            ...
+            index = dynamicIndex()
+            for document in self.documentContent:
+                dynamicIndex.addDocument(index, document)
+            for query in self.queryList:
+                results = index.search(query)
+                for result in results:
+                    print(result)
+                print("\n\n")
     
     
     
