@@ -1,4 +1,5 @@
 from systemVariables import systemVariables
+from queryProcessor import dynamicIndex, termPartitionedIndex
 
 from os import listdir
 from os.path import dirname, realpath
@@ -101,8 +102,32 @@ class mainApplication(QMainWindow):
         
         if len(self.queryList) == 0:
             self.showErrorMessage('Please enter a query to search for')
+            return
         elif not self.filesPresent:
             self.showErrorMessage('Please select the files you would like to search from')
+            return
+
+        self.documentContent = []
+        for index, documentLocation in enumerate(self.listOfFiles):
+            with open(documentLocation, 'r', encoding = 'utf--8', errors = 'ignore') as document:
+                documentBundle = []
+                documentBundle.append(index)
+                documentContent = document.read()
+                documentBundle.append(documentContent)
+                self.documentContent.append(documentBundle)
+        
+        if self.tPIndex.isChecked():
+            index = termPartitionedIndex(len(self.documentContent))
+            for document in self.documentContent:
+                termPartitionedIndex.addDocument(index, document)
+            for query in self.queryList:
+                results = index.search(query)
+                for result in results:
+                    print(result)
+                print("\n\n")
+        
+        else:
+            ...
     
     
     
@@ -281,6 +306,13 @@ class mainApplication(QMainWindow):
         self.queryField.setPlaceholderText('Type your query here...')
         self.queryField.textChanged.connect(self.queryFieldChangeEvent)
         self.queryField.setFocus()
+        
+        self.mainStackedWidget = QStackedWidget(self)
+        self.mainStackedWidget.setObjectName('scrollableWidget')
+        self.mainStackedWidget.setStyleSheet('background-color: #999999;')
+        self.mainStackedWidget.setFixedWidth((systemVariables.appDimension[0] - (200 + 40 + 100)))
+        self.mainStackedWidget.setFixedHeight((systemVariables.appDimension[1]) - (20 + 80 + 80 + 40))
+        self.mainStackedWidget.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, 80 + 80)
     
     
     
@@ -323,7 +355,7 @@ class mainApplication(QMainWindow):
         self.menuBarQueryListScrollableArea.setWidget(self.menuBarQueryListScrollableWidget)
         self.menuBarQueryListScrollableArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.menuBarQueryListScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        
+     
 
 
 
