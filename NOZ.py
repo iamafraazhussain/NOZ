@@ -316,10 +316,26 @@ class mainApplication(QMainWindow):
         
         self.mainStackedWidget = QStackedWidget(self)
         self.mainStackedWidget.setObjectName('scrollableWidget')
-        self.mainStackedWidget.setStyleSheet('background-color: #999999;')
+        # self.mainStackedWidget.setStyleSheet('background-color: #999999;')
         self.mainStackedWidget.setFixedWidth((systemVariables.appDimension[0] - (200 + 40 + 100)))
         self.mainStackedWidget.setFixedHeight((systemVariables.appDimension[1]) - (20 + 80 + 80 + 40))
-        self.mainStackedWidget.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, 80 + 80)
+        self.mainStackedWidget.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, 80 + 50)
+        self.noQueryWidget = QWidget(self.mainStackedWidget)
+        self.noQueryWidget.setObjectName('mainContainerWidget')
+        self.noQueryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
+        self.noQueryWidget.setStyleSheet('background-color: rgba(255, 255, 255, 0.5);')
+        self.noQueryEmptyLabel = QLabel(self.noQueryWidget)
+        self.noQueryEmptyLabel.setObjectName('subContainerLabel')
+        self.noQueryEmptyLabel.setStyleSheet('background-color: rgba(0, 0, 0, 0); color: #333333;')
+        self.noQueryEmptyLabel.setText('Wow, such empty!')
+        self.noQueryEmptyLabel.move((self.noQueryWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 - 15)
+        self.noQuerySearchLabel = QLabel(self.noQueryWidget)
+        self.noQuerySearchLabel.setObjectName('defaultButton')
+        self.noQuerySearchLabel.setText('Surf a query to get started!')
+        self.noQuerySearchLabel.move((self.noQueryWidget.width() - self.noQuerySearchLabel.width()) // 2 - 5, (self.noQueryWidget.height() - self.noQuerySearchLabel.height()) // 2 + 20)
+        self.mainStackedWidget.addWidget(self.noQueryWidget)
+        self.mainStackedWidget.setCurrentWidget(self.noQueryWidget)
+
     
     
     
