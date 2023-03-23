@@ -17,7 +17,7 @@ class termPartitionedIndex:
         documentID = len(self.documents)
         self.documents.append(document)
         
-        for term in document.split():
+        for term in document[1].split():
             partition = hash(term) % self.numberOfDocuments
             self.invertedIndex[partition][term].add(documentID)
     
@@ -32,7 +32,7 @@ class termPartitionedIndex:
 
         relevanceScores = collections.Counter()
         for document in relevantDocuments:
-            documentTerms = set(self.documents[document].split())
+            documentTerms = set(self.documents[document][1].split())
             relevanceScores[document] = len(documentTerms & set(query.split()))
         
         return [(self.documents[document], score) for document, score in relevanceScores.most_common()]
@@ -53,7 +53,7 @@ class dynamicIndex:
         documentID = len(self.documents)
         self.documents.append(document)
         
-        for term in document.split():
+        for term in document[0].split():
             self.invertedIndex[term].add(documentID)
     
     
@@ -66,6 +66,6 @@ class dynamicIndex:
         
         relevanceScores = collections.Counter()
         for document in relevantDocuments:
-            documentTerms = set(self.documents[document].split())
+            documentTerms = set(self.documents[document][0].split())
         
         return [(self.documents[document], score) for document, score in relevanceScores.most_common()]
