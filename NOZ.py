@@ -2,7 +2,8 @@ from systemVariables import systemVariables
 from queryProcessor import dynamicIndex, termPartitionedIndex
 
 from os import listdir
-from os.path import dirname, realpath
+from os.path import basename, dirname, realpath
+from re import match
 from sys import exit, argv
 from time import sleep
 from tkinter import Tk, filedialog
@@ -54,6 +55,33 @@ class mainApplication(QMainWindow):
         
         self.holdTimer = QTimer()
         self.holdTimer.setInterval(2500)
+        
+        self.noQueryIcon = QPushButton()
+        self.queryStackedWidget = QStackedWidget()
+    
+    
+    
+    
+    
+    
+    def getFileName(self, directory):
+        return basename(directory)
+    
+    
+    
+    
+    
+    
+    def eventFilter(self, object, event):
+        
+        if object == self.noQueryIcon and event.type() == QEvent.Type.HoverEnter:
+            self.noQueryIcon.setIcon(QIcon(self.currentDirectory + '\\Images\\Search icon hover'))
+            self.noQueryIcon.setIconSize(QSize(100, 100))
+        elif object == self.noQueryIcon and event.type() == QEvent.Type.HoverLeave:
+            self.noQueryIcon.setIcon(QIcon(self.currentDirectory + '\\Images\\Search icon'))
+            self.noQueryIcon.setIconSize(QSize(100, 100))
+        
+        return super().eventFilter(object, event)
     
     
     
@@ -106,6 +134,11 @@ class mainApplication(QMainWindow):
         elif not self.filesPresent:
             self.showErrorMessage('Please select the files you would like to search from')
             return
+        
+        try:
+            self.mainStackedWidget.removeWidget(self.queryStackedWidget)
+        except:
+            pass
 
         self.documentContent = []
         for index, documentLocation in enumerate(self.listOfFiles):
@@ -120,21 +153,67 @@ class mainApplication(QMainWindow):
             index = termPartitionedIndex(len(self.documentContent))
             for document in self.documentContent:
                 termPartitionedIndex.addDocument(index, document)
-            for query in self.queryList:
-                results = index.search(query)
-                for result in results:
-                    print(result)
-                print("\n\n")
         
         else:
             index = dynamicIndex()
             for document in self.documentContent:
                 dynamicIndex.addDocument(index, document)
-            for query in self.queryList:
-                results = index.search(query)
+        
+        for query in self.queryList:
+            results = index.search(query)
+            queryWidget = QWidget(self.mainStackedWidget)
+            queryWidget.setObjectName('mainCOntainerWidget')
+            queryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
+            currentQuery = QLabel(queryWidget)
+            currentQuery.setObjectName('subContainerLabel')
+            currentQuery.setFixedWidth(queryWidget.width() - 50)
+            currentQuery.setText(f"Showing results for \"{query}\"")
+            currentQuery.setWordWrap(True)
+            currentQuery.move(25, 20)
+            self.queryStackedWidget = QStackedWidget(self.mainStackedWidget)
+            self.queryStackedWidget.setObjectName('mainContainerWidget')
+            self.queryStackedWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
+            if results:
+                resultScrollableArea = QScrollArea(queryWidget)
+                resultScrollableArea.setObjectName('scrollableWidget')
+                resultScrollableArea.setFixedHeight(queryWidget.height() - (20 + 20 + 20))
+                resultScrollableArea.setFixedWidth(queryWidget.width() - 40)
+                resultScrollableArea.move(20, currentQuery.height() + 20 + 20)
+                resultScrollableWidget = QWidget(queryWidget)
+                resultScrollableWidget.setObjectName('scrollableWidget')
+                resultScrollableWidget.setFixedHeight(resultScrollableArea.height())
+                resultLayout = QVBoxLayout()
+                resultLayout.setContentsMargins(5, 0, 5, 10)
+                
                 for result in results:
-                    print(result)
-                print("\n\n")
+                    resultWidget = QWidget(resultScrollableArea)
+                    resultWidget.setObjectName('resultWidget')
+                    resultWidget.setFixedSize(30, resultScrollableWidget.width() - 10)
+                    resultRelevanceScore = QLabel(resultWidget)
+                    resultRelevanceScore.setObjectName('relevanceScore')
+                    resultRelevanceScore.setStyleSheet('padding-left: none;')
+                    resultRelevanceScore.setFixedSize(30, 20)
+                    resultRelevanceScore.setText(str(result[1]))
+                    resultRelevanceScore.setToolTip(f"Relevance score: {result[1]}")
+                    resultRelevanceScore.move(5, 5)
+                    resultRelevanceScore.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                    resultFileName = self.getFileName(self.listOfFiles[result[0][0]])
+                    resultFileLabel = QLabel(resultWidget)
+                    resultFileLabel.setObjectName('alternateContainerWidget')
+                    resultFileLabel.setText(resultFileName)
+                    resultFileLabel.move(5 + 10 + resultRelevanceScore.width(), 5)
+                    resultFileLabel.setToolTip(resultFileName)
+                    resultLayout.addWidget(resultWidget)
+                resultScrollableWidget.setLayout(resultLayout)
+                resultScrollableArea.setWidget(resultScrollableWidget)
+                resultScrollableArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+                resultScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            else:
+                ...
+            self.queryStackedWidget.addWidget(queryWidget)
+        self.queryStackedWidget.setCurrentIndex(0)
+        self.mainStackedWidget.addWidget(self.queryStackedWidget)
+        self.mainStackedWidget.setCurrentWidget(self.queryStackedWidget)
     
     
     
@@ -172,6 +251,8 @@ class mainApplication(QMainWindow):
         
         self.errorLabel.setText(message)
         self.errorLabel.setStyleSheet(f'background-color: {color};')
+        errorLabelWidth = self.errorLabel.width()
+        self.errorLabel.move((((systemVariables.appDimension[0] - 240) - errorLabelWidth) // 2) + 240, 20)
         self.errorLabel.setVisible(True)
         self.holdTimer.timeout.connect(lambda: self.errorLabel.setHidden(True))
         self.holdTimer.timeout.connect(self.holdTimer.stop)
@@ -191,9 +272,11 @@ class mainApplication(QMainWindow):
             self.queryField.setFixedSize(self.queryWidgetSize[0] - self.adaptiveQueryButton.width() - 20, 30)
             try:
                 self.adaptiveQueryButton.clicked.disconnect()
+                self.noQueryIcon.clicked.disconnect()
             except:
                 pass
             self.adaptiveQueryButton.clicked.connect(self.clickSearchButton)
+            self.noQueryIcon.clicked.connect(self.clickSearchButton)
         else:
             self.adaptiveQueryButton.setText('ADD TO QUERY')
             self.adaptiveQueryButton.setFixedWidth(100)
@@ -201,9 +284,18 @@ class mainApplication(QMainWindow):
             self.queryField.setFixedSize(self.queryWidgetSize[0] - self.adaptiveQueryButton.width() - 20, 30)
             try:
                 self.adaptiveQueryButton.clicked.disconnect()
+                self.noQueryIcon.clicked.disconnect()
             except:
                 pass
             self.adaptiveQueryButton.clicked.connect(self.clickAddToQueryButton)
+            self.noQueryIcon.clicked.connect(self.clickAddToQueryButton)
+    
+    
+    
+    def queryIndexChangeEvent(self):
+        
+        if not match('^[0-9]+$', self.currentQuery.text()):
+            self.currentQuery.setText('⫗')
     
     
     
@@ -290,6 +382,7 @@ class mainApplication(QMainWindow):
         self.errorLabel = QLabel(self)
         self.errorLabel.setObjectName('errorMessage')
         self.errorLabel.setFixedSize(300, 20)
+        # self.errorLabel.setFixedHeight(20)
         self.errorLabel.move((((systemVariables.appDimension[0] - (200 + 40)) - 300) // 2) + 200 + 40, 10)
         self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.errorLabel.setHidden(True)
@@ -323,19 +416,53 @@ class mainApplication(QMainWindow):
         self.noQueryWidget = QWidget(self.mainStackedWidget)
         self.noQueryWidget.setObjectName('mainContainerWidget')
         self.noQueryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
-        self.noQueryWidget.setStyleSheet('background-color: rgba(255, 255, 255, 0.5);')
-        self.noQueryEmptyLabel = QLabel(self.noQueryWidget)
-        self.noQueryEmptyLabel.setObjectName('subContainerLabel')
-        self.noQueryEmptyLabel.setStyleSheet('background-color: rgba(0, 0, 0, 0); color: #333333;')
-        self.noQueryEmptyLabel.setText('Wow, such empty!')
-        self.noQueryEmptyLabel.move((self.noQueryWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 - 15)
-        self.noQuerySearchLabel = QLabel(self.noQueryWidget)
-        self.noQuerySearchLabel.setObjectName('defaultButton')
-        self.noQuerySearchLabel.setText('Surf a query to get started!')
-        self.noQuerySearchLabel.move((self.noQueryWidget.width() - self.noQuerySearchLabel.width()) // 2 - 5, (self.noQueryWidget.height() - self.noQuerySearchLabel.height()) // 2 + 20)
+        # self.noQueryWidget.setStyleSheet('background-color: rgba(255, 255, 255, 0.5);')
+        opacity = QGraphicsOpacityEffect()
+        opacity.setOpacity(0.5)
+        # self.noQueryWidget.setGraphicsEffect(opacity)
+        # self.noQueryEmptyLabel = QLabel(self.noQueryWidget)
+        # self.noQueryEmptyLabel.setObjectName('subContainerLabel')
+        # self.noQueryEmptyLabel.setStyleSheet('background-color: rgba(0, 0, 0, 0); color: #333333;')
+        # self.noQueryEmptyLabel.setText('Wow, such empty!')
+        # # self.noQueryEmptyLabel.move((self.mainStackedWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 - 15)
+        # self.noQueryEmptyLabel.move((self.mainStackedWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 - 15)
+        # self.noQuerySearchLabel = QLabel(self.noQueryWidget)
+        # self.noQuerySearchLabel.setObjectName('defaultButton')
+        # self.noQueryEmptyLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.noQuerySearchLabel.setText('Surf a query to get started!')
+        # self.noQuerySearchLabel.move((self.mainStackedWidget.width() - self.noQuerySearchLabel.width()) // 2 - 5, (self.noQueryWidget.height() - self.noQuerySearchLabel.height()) // 2 + 20)
+        self.noQueryIcon = QPushButton(self.noQueryWidget)
+        self.noQueryIcon.setFixedSize(100, 100)
+        self.noQueryIcon.setObjectName('scrollableWidget')
+        self.noQueryIcon.setIcon(QIcon(self.currentDirectory + '\\Images\\Search icon.png'))
+        self.noQueryIcon.setIconSize(QSize(100, 100))
+        self.noQueryIcon.move((self.mainStackedWidget.width() - 100) // 2, ((self.mainStackedWidget.height() - 100) // 2) - 30)
+        self.noQueryIcon.clicked.connect(self.clickSearchButton)
+        self.noQueryIcon.installEventFilter(self)
         self.mainStackedWidget.addWidget(self.noQueryWidget)
         self.mainStackedWidget.setCurrentWidget(self.noQueryWidget)
-
+        
+        self.previousQueryButton = QPushButton(self)
+        self.previousQueryButton.setObjectName('defaultButton')
+        self.previousQueryButton.setFixedSize(30, 20)
+        self.previousQueryButton.setText('◀')
+        self.previousQueryButton.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, self.mainStackedWidget.height() + 80 + 60)
+        self.previousQueryButton.setDisabled(True)
+        self.nextQueryButton = QPushButton(self)
+        self.nextQueryButton.setObjectName('defaultButton')
+        self.nextQueryButton.setFixedSize(30, 20)
+        self.nextQueryButton.setText('▶')
+        self.nextQueryButton.move((systemVariables.appDimension[0] - (80)), self.mainStackedWidget.height() + 80 + 60)
+        self.nextQueryButton.setDisabled(True)
+        self.currentQuery = QLineEdit(self)
+        self.currentQuery.setObjectName('alternateContainerWidget')
+        self.currentQuery.setPlaceholderText('⫗')
+        self.currentQuery.setToolTip('Search for a few queries to view the index')
+        self.currentQuery.setFixedSize(50, 20)
+        self.currentQuery.move((((systemVariables.appDimension[0] - 240) - self.currentQuery.width()) // 2) + 240, self.mainStackedWidget.height() + 80 + 60)
+        self.currentQuery.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.currentQuery.setDisabled(True)
+        
     
     
     
