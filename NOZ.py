@@ -170,9 +170,10 @@ class mainApplication(QMainWindow):
             currentQuery.setText(f"Showing results for \"{query}\"")
             currentQuery.setWordWrap(True)
             currentQuery.move(25, 20)
-            self.queryStackedWidget = QStackedWidget(self.mainStackedWidget)
+            self.queryStackedWidget = QWidget(self.mainStackedWidget)
             self.queryStackedWidget.setObjectName('mainContainerWidget')
             self.queryStackedWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
+            self.queryStackedLayout = QStackedLayout()
             if results:
                 resultScrollableArea = QScrollArea(queryWidget)
                 resultScrollableArea.setObjectName('scrollableWidget')
@@ -210,10 +211,18 @@ class mainApplication(QMainWindow):
                 resultScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             else:
                 ...
-            self.queryStackedWidget.addWidget(queryWidget)
-        self.queryStackedWidget.setCurrentIndex(0)
+            self.queryStackedLayout.addWidget(queryWidget)
+        self.queryStackedWidget.setLayout(self.queryStackedLayout)
+        self.queryStackedLayout.setCurrentIndex(0)
+        print(self.queryStackedLayout.count())
         self.mainStackedWidget.addWidget(self.queryStackedWidget)
         self.mainStackedWidget.setCurrentWidget(self.queryStackedWidget)
+        
+        if len(self.queryList) > 1:
+            self.previousQueryButton.setEnabled(True)
+            self.nextQueryButton.setEnabled(True)
+        self.currentQuery.setText(str(self.queryStackedLayout.currentIndex()))
+        self.currentQuery.setEnabled(True)
     
     
     
@@ -241,6 +250,20 @@ class mainApplication(QMainWindow):
     def clickDeleteQueryButton(self, index):
         self.queryList.pop(index)
         self.createQueryList()
+    
+    
+    
+    def clickPreviousButton(self):
+        self.queryStackedLayout.setCurrentIndex((self.queryStackedLayout.currentIndex() + (len(self.queryList) - 1)) % len(self.queryList))
+        print((self.queryStackedLayout.currentIndex() + (len(self.queryList) - 2)) % len(self.queryList))
+        self.currentQuery.setText(str(self.queryStackedLayout.currentIndex() + 1))
+    
+    
+    
+    def clickNextButton(self):
+        self.queryStackedLayout.setCurrentIndex((self.queryStackedLayout.currentIndex() + 1) % len(self.queryList))
+        print((self.queryStackedLayout.currentIndex() + 1) % len(self.queryList))
+        self.currentQuery.setText(str(self.queryStackedLayout.currentIndex() + 1))
 
     
     
@@ -295,7 +318,13 @@ class mainApplication(QMainWindow):
     def queryIndexChangeEvent(self):
         
         if not match('^[0-9]+$', self.currentQuery.text()):
-            self.currentQuery.setText('⫗')
+            self.currentQuery.setText('')
+        else:
+            if int(self.currentQuery.text()) < 1:
+                self.currentQuery.setText('1')
+            elif int(self.currentQuery.text()) > len(self.queryList):
+                self.currentQuery.setText(str(len(self.queryList)))
+            self.queryStackedLayout.setCurrentIndex(int(self.currentQuery.text()) - 1)
     
     
     
@@ -448,12 +477,14 @@ class mainApplication(QMainWindow):
         self.previousQueryButton.setText('◀')
         self.previousQueryButton.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, self.mainStackedWidget.height() + 80 + 60)
         self.previousQueryButton.setDisabled(True)
+        self.previousQueryButton.clicked.connect(self.clickPreviousButton)
         self.nextQueryButton = QPushButton(self)
         self.nextQueryButton.setObjectName('defaultButton')
         self.nextQueryButton.setFixedSize(30, 20)
         self.nextQueryButton.setText('▶')
         self.nextQueryButton.move((systemVariables.appDimension[0] - (80)), self.mainStackedWidget.height() + 80 + 60)
         self.nextQueryButton.setDisabled(True)
+        self.nextQueryButton.clicked.connect(self.clickNextButton)
         self.currentQuery = QLineEdit(self)
         self.currentQuery.setObjectName('alternateContainerWidget')
         self.currentQuery.setPlaceholderText('⫗')
@@ -462,6 +493,7 @@ class mainApplication(QMainWindow):
         self.currentQuery.move((((systemVariables.appDimension[0] - 240) - self.currentQuery.width()) // 2) + 240, self.mainStackedWidget.height() + 80 + 60)
         self.currentQuery.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.currentQuery.setDisabled(True)
+        self.currentQuery.textChanged.connect(self.queryIndexChangeEvent)
         
     
     
