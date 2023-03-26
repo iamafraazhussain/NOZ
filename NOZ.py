@@ -163,7 +163,6 @@ class mainApplication(QMainWindow):
         
         if len(self.queryList) > 0:
             query = self.queryList[self.currentQueryIndex]
-            print(query)
             results = index.search(query)
             self.queryWidget = QWidget(self.mainStackedWidget)
             self.queryWidget.setObjectName('mainContainerWidget')
@@ -174,20 +173,18 @@ class mainApplication(QMainWindow):
             currentQuery.setText(f"Showing results for \"{query}\"")
             currentQuery.setWordWrap(True)
             currentQuery.move(25, 20)
-            self.queryWidget = QWidget(self.mainStackedWidget)
-            self.queryWidget.setObjectName('mainContainerWidget')
-            self.queryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
-            '''if results:
+            if results:
                 resultScrollableArea = QScrollArea(self.queryWidget)
                 resultScrollableArea.setObjectName('scrollableWidget')
-                resultScrollableArea.setFixedHeight(self.queryWidget.height() - (20 + 20 + 20))
-                resultScrollableArea.setFixedWidth(self.queryWidget.width() - 40)
+                resultScrollableArea.setFixedHeight(self.mainStackedWidget.height() - (20 + 20 + 20))
+                resultScrollableArea.setFixedWidth(self.mainStackedWidget.width() - 40)
                 resultScrollableArea.move(20, currentQuery.height() + 20 + 20)
                 resultScrollableWidget = QWidget(self.queryWidget)
                 resultScrollableWidget.setObjectName('scrollableWidget')
                 resultScrollableWidget.setFixedHeight(resultScrollableArea.height())
                 resultLayout = QVBoxLayout()
-                resultLayout.setContentsMargins(5, 0, 5, 10)
+                resultLayout.setContentsMargins(0, 0, 0, 10)
+                resultLayout.setSpacing(5)
                 
                 for result in results:
                     resultWidget = QWidget(resultScrollableArea)
@@ -195,7 +192,6 @@ class mainApplication(QMainWindow):
                     resultWidget.setFixedSize(30, resultScrollableWidget.width() - 10)
                     resultRelevanceScore = QLabel(resultWidget)
                     resultRelevanceScore.setObjectName('relevanceScore')
-                    resultRelevanceScore.setStyleSheet('padding-left: none;')
                     resultRelevanceScore.setFixedSize(30, 20)
                     resultRelevanceScore.setText(str(result[1]))
                     resultRelevanceScore.setToolTip(f"Relevance score: {result[1]}")
@@ -205,7 +201,7 @@ class mainApplication(QMainWindow):
                     resultFileLabel = QLabel(resultWidget)
                     resultFileLabel.setObjectName('alternateContainerWidget')
                     resultFileLabel.setText(resultFileName)
-                    resultFileLabel.move(5 + 10 + resultRelevanceScore.width(), 5)
+                    resultFileLabel.move(5 + 30 + resultRelevanceScore.width(), 5)
                     resultFileLabel.setToolTip(resultFileName)
                     resultLayout.addWidget(resultWidget)
                 resultScrollableWidget.setLayout(resultLayout)
@@ -213,7 +209,7 @@ class mainApplication(QMainWindow):
                 resultScrollableArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
                 resultScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             else:
-                ...'''
+                ...
             self.mainStackedWidget.addWidget(self.queryWidget)
             self.mainStackedWidget.setCurrentWidget(self.queryWidget)
             
