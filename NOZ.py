@@ -52,12 +52,14 @@ class mainApplication(QMainWindow):
         self.listOfFiles = []
         self.queryList = []
         self.filesPresent = False
+        self.currentQueryIndex = 0
+        self.changeQueryIndex = False
         
         self.holdTimer = QTimer()
         self.holdTimer.setInterval(2500)
         
         self.noQueryIcon = QPushButton()
-        self.queryStackedWidget = QStackedWidget()
+        self.queryStackedWidget = QWidget()
     
     
     
@@ -136,7 +138,7 @@ class mainApplication(QMainWindow):
             return
         
         try:
-            self.mainStackedWidget.removeWidget(self.queryStackedWidget)
+            self.mainStackedWidget.removeWidget(self.queryWidget)
         except:
             pass
 
@@ -159,28 +161,29 @@ class mainApplication(QMainWindow):
             for document in self.documentContent:
                 dynamicIndex.addDocument(index, document)
         
-        for query in self.queryList:
+        if len(self.queryList) > 0:
+            query = self.queryList[self.currentQueryIndex]
+            print(query)
             results = index.search(query)
-            queryWidget = QWidget(self.mainStackedWidget)
-            queryWidget.setObjectName('mainCOntainerWidget')
-            queryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
-            currentQuery = QLabel(queryWidget)
+            self.queryWidget = QWidget(self.mainStackedWidget)
+            self.queryWidget.setObjectName('mainContainerWidget')
+            self.queryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
+            currentQuery = QLabel(self.queryWidget)
             currentQuery.setObjectName('subContainerLabel')
-            currentQuery.setFixedWidth(queryWidget.width() - 50)
+            currentQuery.setFixedWidth(self.queryWidget.width() - 50)
             currentQuery.setText(f"Showing results for \"{query}\"")
             currentQuery.setWordWrap(True)
             currentQuery.move(25, 20)
-            self.queryStackedWidget = QWidget(self.mainStackedWidget)
-            self.queryStackedWidget.setObjectName('mainContainerWidget')
-            self.queryStackedWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
-            self.queryStackedLayout = QStackedLayout()
-            if results:
-                resultScrollableArea = QScrollArea(queryWidget)
+            self.queryWidget = QWidget(self.mainStackedWidget)
+            self.queryWidget.setObjectName('mainContainerWidget')
+            self.queryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
+            '''if results:
+                resultScrollableArea = QScrollArea(self.queryWidget)
                 resultScrollableArea.setObjectName('scrollableWidget')
-                resultScrollableArea.setFixedHeight(queryWidget.height() - (20 + 20 + 20))
-                resultScrollableArea.setFixedWidth(queryWidget.width() - 40)
+                resultScrollableArea.setFixedHeight(self.queryWidget.height() - (20 + 20 + 20))
+                resultScrollableArea.setFixedWidth(self.queryWidget.width() - 40)
                 resultScrollableArea.move(20, currentQuery.height() + 20 + 20)
-                resultScrollableWidget = QWidget(queryWidget)
+                resultScrollableWidget = QWidget(self.queryWidget)
                 resultScrollableWidget.setObjectName('scrollableWidget')
                 resultScrollableWidget.setFixedHeight(resultScrollableArea.height())
                 resultLayout = QVBoxLayout()
@@ -210,19 +213,34 @@ class mainApplication(QMainWindow):
                 resultScrollableArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
                 resultScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             else:
-                ...
-            self.queryStackedLayout.addWidget(queryWidget)
-        self.queryStackedWidget.setLayout(self.queryStackedLayout)
-        self.queryStackedLayout.setCurrentIndex(0)
-        print(self.queryStackedLayout.count())
-        self.mainStackedWidget.addWidget(self.queryStackedWidget)
-        self.mainStackedWidget.setCurrentWidget(self.queryStackedWidget)
-        
-        if len(self.queryList) > 1:
-            self.previousQueryButton.setEnabled(True)
-            self.nextQueryButton.setEnabled(True)
-        self.currentQuery.setText(str(self.queryStackedLayout.currentIndex()))
-        self.currentQuery.setEnabled(True)
+                ...'''
+            self.mainStackedWidget.addWidget(self.queryWidget)
+            self.mainStackedWidget.setCurrentWidget(self.queryWidget)
+            
+            if len(self.queryList) > 1:
+                self.previousQueryButton.setEnabled(True)
+                self.nextQueryButton.setEnabled(True)
+                self.currentQuery.setEnabled(True)
+            else:
+                self.currentQuery.setDisabled(True)
+                self.previousQueryButton.setDisabled(True)
+                self.nextQueryButton.setDisabled(True)
+            if self.changeQueryIndex:
+                self.currentQuery.setText(str(self.currentQueryIndex))
+            self.currentQuery.setToolTip(f'Current query index: {self.currentQueryIndex + 1}')
+            
+        else:
+            try:
+                self.mainStackedWidget.removeWidget(self.queryWidget)
+            except:
+                pass
+            self.mainStackedWidget.setCurrentWidget(self.noQueryWidget)
+            self.changeQueryIndex = False
+            self.currentQuery.setText('')
+            self.currentQuery.setDisabled(True)
+            self.previousQueryButton.setDisabled(True)
+            self.nextQueryButton.setDisabled(True)
+            self.currentQuery.setToolTip('Search for a few queries to view the index')
     
     
     
@@ -250,20 +268,36 @@ class mainApplication(QMainWindow):
     def clickDeleteQueryButton(self, index):
         self.queryList.pop(index)
         self.createQueryList()
+        self.currentQueryIndex = 0
+        self.changeQueryIndex = False
+        if len(self.queryList) > 0:
+            self.clickSearchButton()
+        else:
+            try:
+                self.mainStackedWidget.removeWidget(self.queryWidget)
+            except:
+                pass
+            self.mainStackedWidget.setCurrentWidget(self.noQueryWidget)
+            self.changeQueryIndex = False
+            self.currentQuery.setText('')
+            self.currentQuery.setDisabled(True)
+            self.previousQueryButton.setDisabled(True)
+            self.nextQueryButton.setDisabled(True)
+            self.currentQuery.setToolTip('Search for a few queries to view the index')
     
     
     
     def clickPreviousButton(self):
-        self.queryStackedLayout.setCurrentIndex((self.queryStackedLayout.currentIndex() + (len(self.queryList) - 1)) % len(self.queryList))
-        print((self.queryStackedLayout.currentIndex() + (len(self.queryList) - 2)) % len(self.queryList))
-        self.currentQuery.setText(str(self.queryStackedLayout.currentIndex() + 1))
+        self.currentQueryIndex = ((self.currentQueryIndex - 1) + len(self.queryList)) % len(self.queryList)
+        self.currentQuery.setText(str(self.currentQueryIndex + 1))
+        self.changeQueryIndex = False
     
     
     
     def clickNextButton(self):
-        self.queryStackedLayout.setCurrentIndex((self.queryStackedLayout.currentIndex() + 1) % len(self.queryList))
-        print((self.queryStackedLayout.currentIndex() + 1) % len(self.queryList))
-        self.currentQuery.setText(str(self.queryStackedLayout.currentIndex() + 1))
+        self.currentQueryIndex = (self.currentQueryIndex + 1) % len(self.queryList)
+        self.currentQuery.setText(str(self.currentQueryIndex + 1))
+        self.changeQueryIndex = False
 
     
     
@@ -324,7 +358,10 @@ class mainApplication(QMainWindow):
                 self.currentQuery.setText('1')
             elif int(self.currentQuery.text()) > len(self.queryList):
                 self.currentQuery.setText(str(len(self.queryList)))
-            self.queryStackedLayout.setCurrentIndex(int(self.currentQuery.text()) - 1)
+            else:
+                self.currentQueryIndex = int(self.currentQuery.text()) - 1
+                self.changeQueryIndex = False
+                self.clickSearchButton()
     
     
     
