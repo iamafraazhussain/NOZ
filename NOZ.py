@@ -1,7 +1,7 @@
 from systemVariables import systemVariables
 from queryProcessor import dynamicIndex, termPartitionedIndex
 
-from os import listdir
+from os import listdir, startfile
 from os.path import basename, dirname, realpath
 from re import match
 from sys import exit, argv
@@ -93,12 +93,13 @@ class mainApplication(QMainWindow):
     def clickSelectFromDirectoryButton(self):
         
         directory = filedialog.askdirectory()
+        stringDirectory = str(directory)
+        self.listOfFiles = []
         if directory:
             directory = listdir(directory)
         for file in directory:
             if file.endswith('.txt'):
-                self.listOfFiles.append(file)
-            print(file)
+                self.listOfFiles.append(stringDirectory + '\\' + file)
         if len(self.listOfFiles) == 0:
             self.showErrorMessage("No files were found in the given directory")
             self.filesPresent = False
@@ -113,6 +114,7 @@ class mainApplication(QMainWindow):
     def clickSelectFromFilesButton(self):
         
         directory = filedialog.askopenfilenames()
+        self.listOfFiles = []
         for file in directory:
             if file.endswith('.txt'):
                 self.listOfFiles.append(file)
@@ -176,15 +178,15 @@ class mainApplication(QMainWindow):
             if results:
                 resultScrollableArea = QScrollArea(self.queryWidget)
                 resultScrollableArea.setObjectName('scrollableWidget')
-                resultScrollableArea.setFixedHeight(self.mainStackedWidget.height() - (20 + 20 + 20))
                 resultScrollableArea.setFixedWidth(self.mainStackedWidget.width() - 40)
+                resultScrollableArea.setFixedHeight(self.mainStackedWidget.height() - (20 + 20 + 20 + 20))
                 resultScrollableArea.move(20, currentQuery.height() + 20 + 20)
                 resultScrollableWidget = QWidget(self.queryWidget)
                 resultScrollableWidget.setObjectName('scrollableWidget')
-                resultScrollableWidget.setFixedHeight(resultScrollableArea.height())
+                # resultScrollableWidget.setMaximumHeight(resultScrollableArea.height())
                 resultScrollableWidget.setFixedWidth(resultScrollableArea.width())
                 resultLayout = QVBoxLayout()
-                resultLayout.setContentsMargins(5, 0, 5, 10)
+                # resultLayout.setContentsMargins(5, 0, 5, 10)
                 resultLayout.setSpacing(10)
                 
                 for result in results:
@@ -201,18 +203,31 @@ class mainApplication(QMainWindow):
                     resultFileName = self.getFileName(self.listOfFiles[result[0][0]])
                     resultFileLabel = QLabel(resultWidget)
                     resultFileLabel.setObjectName('alternateContainerWidget')
-                    resultFileLabel.setFixedSize(resultScrollableArea.width() - (resultRelevanceScore.width() + 5 + 10 + 50 + 5 + 10), 20)
+                    resultFileLabel.setStyleSheet('background-color: rgba(0, 0, 0, 0);')
+                    resultFileLabel.setFixedSize(resultScrollableArea.width() - (resultRelevanceScore.width() + 5 + 10 + 50 + 5 + 10 + 10), 20)
                     resultFileLabel.setText(resultFileName)
                     resultFileLabel.move(5 + 10 + resultRelevanceScore.width(), 5)
                     resultFileLabel.setAlignment(Qt.AlignmentFlag.AlignVCenter)
                     resultFileLabel.setToolTip(resultFileName)
+                    openFileButton = QPushButton(resultWidget)
+                    openFileButton.setObjectName('defaultAlterButton')
+                    openFileButton.setFixedSize(50, 20)
+                    openFileButton.move(resultWidget.width() - 50 - 5, 5)
+                    openFileButton.setText('OPEN')
+                    openFileButton.clicked.connect(lambda checked, argument = self.listOfFiles[result[0][0]]: startfile(argument))
                     resultLayout.addWidget(resultWidget)
                 resultScrollableWidget.setLayout(resultLayout)
                 resultScrollableArea.setWidget(resultScrollableWidget)
                 resultScrollableArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
                 resultScrollableArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             else:
-                ...
+                noResults = QLabel(self.queryWidget)
+                noResults.setObjectName('alternateContainerWidget')
+                noResults.setStyleSheet('background-color: #e9e2d7;')
+                noResults.setFixedSize(200, 20)
+                noResults.setText('No documents were found for this query')
+                noResults.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                noResults.move((self.queryWidget.width() - noResults.width()) // 2, (self.queryWidget.height() - noResults.height()) // 2)
             self.mainStackedWidget.addWidget(self.queryWidget)
             self.mainStackedWidget.setCurrentWidget(self.queryWidget)
             
@@ -440,7 +455,7 @@ class mainApplication(QMainWindow):
         self.menuBarQueryListScrollableArea = QScrollArea(self.menuBarQueryListWidget)
         self.menuBarQueryListScrollableArea.setObjectName('scrollableWidget')
         self.menuBarQueryListScrollableArea.setFixedWidth(180)
-        self.menuBarQueryListScrollableArea.setMaximumHeight(180)
+        # self.menuBarQueryListScrollableArea.setMaximumHeight(180)
         self.menuBarQueryListScrollableArea.move(0, 35)
         self.createQueryList()
         
