@@ -66,7 +66,7 @@ class systemVariables:
     }
     
     
-    
+     
     #defaultAlterButton
     { 
         background-color: #333333;
@@ -97,7 +97,6 @@ class systemVariables:
         border-radius: 10px;
         font-family: 'Nirmala UI';
         font-size: 10px;
-        padding: 5px;
         padding-left: 10px;
         padding-right: 10px;
         color: #333333;
@@ -142,7 +141,6 @@ class systemVariables:
         border-radius: 10px;
         font-family: 'Nirmala UI';
         font-size: 10px;
-        padding: 5px;
         color: #f5f3e9;
     }
     
@@ -156,5 +154,41 @@ class systemVariables:
         font-size: 9px;
         padding: 5px;
         color: #e9e2d7;
+    }
+    
+    
+    
+    #resultWidget
+    { 
+        background-color: #e9e2d7;
+        border-radius: 10px;
+        font-family: 'Nirmala UI';
+        font-size: 10px;
+        padding: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        color: #333333;
+    }
+    
+    
+    
+    #exitButton
+    { 
+        background-color: #FF3000;
+        border-radius: 5px;
+    }
+    
+    #exitButton:hover
+    {
+        background-color: #333333;
+        color: #f5f3e9;
+    }
+    
+    
+    
+    #optionContainerWidget
+    {
+        background-color: #333333;        
+        border-radius: 10px;
     }
     '''
