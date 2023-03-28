@@ -7,6 +7,7 @@ from re import match
 from sys import exit, argv
 from time import sleep
 from tkinter import Tk, filedialog
+from webbrowser import open as openLink
 
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -82,6 +83,26 @@ class mainApplication(QMainWindow):
         elif object == self.noQueryIcon and event.type() == QEvent.Type.HoverLeave:
             self.noQueryIcon.setIcon(QIcon(self.currentDirectory + '\\Images\\Search icon'))
             self.noQueryIcon.setIconSize(QSize(100, 100))
+        
+        if object == self.gitHubOptionButton and event.type() == QEvent.Type.HoverEnter:
+            self.optionMessage.setText('Open NOZ\'s GitHub page')
+            self.optionMessage.setFixedWidth(140)
+            optionMessageWidth = self.optionMessage.width()
+            self.optionMessage.move((((systemVariables.appDimension[0] - 240) - optionMessageWidth) // 2) + 240, self.mainStackedWidget.height() + 80 + 60 + 20 + 20)
+            self.optionMessage.setVisible(True)
+        if object == self.gitHubOptionButton and event.type() == QEvent.Type.HoverLeave:
+            self.optionMessage.setText('')
+            self.optionMessage.setHidden(True)
+        
+        if object == self.exitOptionButton and event.type() == QEvent.Type.HoverEnter:
+            self.optionMessage.setText('Quit NOZ')
+            self.optionMessage.setFixedWidth(65)
+            optionMessageWidth = self.optionMessage.width()
+            self.optionMessage.move((((systemVariables.appDimension[0] - 240) - optionMessageWidth) // 2) + 240, self.mainStackedWidget.height() + 80 + 60 + 20 + 20)
+            self.optionMessage.setVisible(True)
+        if object == self.exitOptionButton and event.type() == QEvent.Type.HoverLeave:
+            self.optionMessage.setText('')
+            self.optionMessage.setHidden(True)
         
         return super().eventFilter(object, event)
     
@@ -323,12 +344,23 @@ class mainApplication(QMainWindow):
         self.errorLabel.setText(message)
         self.errorLabel.setStyleSheet(f'background-color: {color};')
         errorLabelWidth = self.errorLabel.width()
-        self.errorLabel.move((((systemVariables.appDimension[0] - 240) - errorLabelWidth) // 2) + 240, 20)
+        self.errorLabel.move((((systemVariables.appDimension[0] - 240) - errorLabelWidth) // 2) + 240, 10)
         self.errorLabel.setVisible(True)
         self.holdTimer.timeout.connect(lambda: self.errorLabel.setHidden(True))
         self.holdTimer.timeout.connect(self.holdTimer.stop)
         self.holdTimer.start()
     
+    
+    
+    def showOptionMessage(self, message):
+        self.optionMessage.setText(message)
+        optionMessageWidth = self.optionMessage.width()
+        self.optionMessage.move((((systemVariables.appDimension[0] - 240) - optionMessageWidth) // 2) + 240, self.mainStackedWidget.height() + 80 + 60 + 20 + 20)
+        self.optionMessage.setVisible(True)
+        self.holdTimer.timeout.connect(lambda: self.optionMessage.setHidden(True))
+        self.holdTimer.timeout.connect(self.holdTimer.stop)
+        self.holdTimer.start()
+
     
     
     
@@ -455,22 +487,20 @@ class mainApplication(QMainWindow):
         self.menuBarQueryListScrollableArea = QScrollArea(self.menuBarQueryListWidget)
         self.menuBarQueryListScrollableArea.setObjectName('scrollableWidget')
         self.menuBarQueryListScrollableArea.setFixedWidth(180)
-        # self.menuBarQueryListScrollableArea.setMaximumHeight(180)
         self.menuBarQueryListScrollableArea.move(0, 35)
         self.createQueryList()
         
         self.errorLabel = QLabel(self)
         self.errorLabel.setObjectName('errorMessage')
         self.errorLabel.setFixedSize(300, 20)
-        # self.errorLabel.setFixedHeight(20)
         self.errorLabel.move((((systemVariables.appDimension[0] - (200 + 40)) - 300) // 2) + 200 + 40, 10)
         self.errorLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.errorLabel.setHidden(True)
         
-        self.queryWidgetSize = [(systemVariables.appDimension[0] - (200 + 40 + 100)), 30]
+        self.queryWidgetSize = [(systemVariables.appDimension[0] - (200 + 40 + 100 + 0)), 30]
         queryWidget = QWidget(self)
         queryWidget.setObjectName('mainContainerWidget')
-        queryWidget.setFixedSize((systemVariables.appDimension[0] - (200 + 40 + 100)), 30)
+        queryWidget.setFixedSize(self.queryWidgetSize[0], self.queryWidgetSize[1])
         queryWidget.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, 50)
         self.adaptiveQueryButton = QPushButton(queryWidget)
         self.adaptiveQueryButton.setObjectName('defaultAlterButton')
@@ -487,30 +517,38 @@ class mainApplication(QMainWindow):
         self.queryField.textChanged.connect(self.queryFieldChangeEvent)
         self.queryField.setFocus()
         
+        optionWidget = QWidget(self)
+        optionWidget.setObjectName('optionContainerWidget')
+        optionWidget.setFixedSize(20, 50)
+        optionWidget.move(systemVariables.appDimension[0] - 35, (systemVariables.appDimension[1] - optionWidget.height()) // 2)
+        self.gitHubOptionButton = QPushButton(optionWidget)
+        self.gitHubOptionButton.setObjectName('defaultButton')
+        self.gitHubOptionButton.setStyleSheet('border-radius: 5px;')
+        self.gitHubOptionButton.setFixedSize(10, 10)
+        self.gitHubOptionButton.move(5, 5)
+        self.gitHubOptionButton.clicked.connect(lambda checked, argument = 'https://github.com/iamafraazhussain/NOZ': openLink(argument))
+        self.gitHubOptionButton.installEventFilter(self)
+        self.exitOptionButton = QPushButton(optionWidget)
+        self.exitOptionButton.setObjectName('exitButton')
+        self.exitOptionButton.setFixedSize(10, 10)
+        self.exitOptionButton.move(5, 35)
+        self.exitOptionButton.clicked.connect(exit)
+        self.exitOptionButton.installEventFilter(self)
+        
         self.mainStackedWidget = QStackedWidget(self)
         self.mainStackedWidget.setObjectName('scrollableWidget')
-        # self.mainStackedWidget.setStyleSheet('background-color: #999999;')
         self.mainStackedWidget.setFixedWidth((systemVariables.appDimension[0] - (200 + 40 + 100)))
         self.mainStackedWidget.setFixedHeight((systemVariables.appDimension[1]) - (20 + 80 + 80 + 40))
         self.mainStackedWidget.move((((systemVariables.appDimension[0] - (200 + 40)) - (systemVariables.appDimension[0] - (200 + 40 + 100))) // 2) + 200 + 40, 80 + 50)
         self.noQueryWidget = QWidget(self.mainStackedWidget)
         self.noQueryWidget.setObjectName('mainContainerWidget')
         self.noQueryWidget.setFixedSize(self.mainStackedWidget.width(), self.mainStackedWidget.height())
-        # self.noQueryWidget.setStyleSheet('background-color: rgba(255, 255, 255, 0.5);')
-        opacity = QGraphicsOpacityEffect()
-        opacity.setOpacity(0.5)
-        # self.noQueryWidget.setGraphicsEffect(opacity)
-        # self.noQueryEmptyLabel = QLabel(self.noQueryWidget)
-        # self.noQueryEmptyLabel.setObjectName('subContainerLabel')
-        # self.noQueryEmptyLabel.setStyleSheet('background-color: rgba(0, 0, 0, 0); color: #333333;')
-        # self.noQueryEmptyLabel.setText('Wow, such empty!')
-        # # self.noQueryEmptyLabel.move((self.mainStackedWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 - 15)
-        # self.noQueryEmptyLabel.move((self.mainStackedWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 - 15)
-        # self.noQuerySearchLabel = QLabel(self.noQueryWidget)
-        # self.noQuerySearchLabel.setObjectName('defaultButton')
-        # self.noQueryEmptyLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # self.noQuerySearchLabel.setText('Surf a query to get started!')
-        # self.noQuerySearchLabel.move((self.mainStackedWidget.width() - self.noQuerySearchLabel.width()) // 2 - 5, (self.noQueryWidget.height() - self.noQuerySearchLabel.height()) // 2 + 20)
+        self.noQueryEmptyLabel = QLabel(self.noQueryWidget)
+        self.noQueryEmptyLabel.setObjectName('defaultButton')
+        self.noQueryEmptyLabel.setText('Wow, such empty!')
+        self.noQueryEmptyLabel.setFixedSize(110, 20)
+        self.noQueryEmptyLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.noQueryEmptyLabel.move((self.mainStackedWidget.width() - self.noQueryEmptyLabel.width()) // 2, (self.noQueryWidget.height() - self.noQueryEmptyLabel.height()) // 2 + 40)
         self.noQueryIcon = QPushButton(self.noQueryWidget)
         self.noQueryIcon.setFixedSize(100, 100)
         self.noQueryIcon.setObjectName('scrollableWidget')
@@ -545,6 +583,13 @@ class mainApplication(QMainWindow):
         self.currentQuery.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.currentQuery.setDisabled(True)
         self.currentQuery.textChanged.connect(self.queryIndexChangeEvent)
+        
+        self.optionMessage = QLabel(self)
+        self.optionMessage.setObjectName('defaultButton')
+        self.optionMessage.setFixedHeight(20)
+        self.optionMessage.move((((systemVariables.appDimension[0] - 240) - self.optionMessage.width()) // 2) + 240, self.mainStackedWidget.height() + 80 + 60 + 20 + 20)
+        self.optionMessage.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.optionMessage.setHidden(True)
         
     
     
