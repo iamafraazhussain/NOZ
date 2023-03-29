@@ -11,8 +11,9 @@ The working of distributed indexing involves the following steps:
 - Query processing: When a query is issued, it is sent to all the nodes in the system. Each node processes the query using its local index and returns the results to the query coordinator. The coordinator then merges the results from all the nodes and returns the final result to the user.
 
 The advantage of distributed indexing is that it allows for the efficient processing of large-scale data sets by distributing the work across multiple machines. This reduces the amount of time required to build and search the index, and also increases the scalability and fault-tolerance of the system.
-<br>
-<br>
+
+<br></br>
+
 #### Distributed indexing using Dynamic indexing
 Dynamic indexing is a type of distributed indexing that allows for real-time indexing and querying of data as it is added or removed from the system. In dynamic indexing, documents are partitioned into smaller subsets, and each subset is indexed by a separate node in the network. As new documents are added or removed, the system automatically reorganizes the partitions and updates the indexes in real-time, allowing for immediate searchability of the newly added documents.
 By using dynamic distributed indexing, it is possible to create a highly scalable and efficient system for indexing and searching large collections of documents. This approach allows for real-time updates and immediate searchability of new documents, making it ideal for applications such as search engines, e-commerce sites, and social media platforms.
@@ -25,7 +26,7 @@ By using dynamic distributed indexing, it is possible to create a highly scalabl
 - Updating: When new documents are added or removed from the collection, the system automatically reorganizes the partitions and updates the indexes in real-time.
 
 <br></br>
-<br></br>
+
 #### Distributed indexing using Term-Partitioned indexing ####
 Distributed indexing based on term-partitioned indexing is a technique used to distribute the indexing workload across multiple machines or nodes in a distributed system. In this approach, the index is partitioned into smaller subsets called term partitions. Each term partition is stored on a separate machine or node in the distributed system.
 The basic idea behind term-partitioned indexing is to divide the document collection into smaller subsets and create a local index for each subset. A global index is then created by merging the local indexes of each subset. The local indexes are updated incrementally as new documents are added to the document collection. This approach provides scalability and improves the indexing and search performance of the system.
@@ -39,22 +40,22 @@ The basic idea behind term-partitioned indexing is to divide the document collec
 
 By dividing the indexing workload into smaller subsets and distributing them across multiple machines or nodes, distributed indexing based on term-partitioned indexing provides a scalable solution for indexing and searching large document collections. It also provides fault tolerance and high availability, as the failure of a single machine or node does not affect the entire system.
 
-<br>
-<br>
+<br></br>
+
 ## How does the query processor in NOZ work?
 Distributed indexing is a technique that allows indexing and searching of data across multiple machines or nodes. This technique is widely used in large-scale search engines, as it allows the system to handle a large amount of data and traffic.
 There are several approaches to implement distributed indexing, and two commonly used techniques are dynamic indexing and term-partitioned indexing. In this code, we can see the implementation of these techniques in two separate classes: `dynamicIndex` and `termPartitionedIndex`.
 
-<br>
-<br>
+<br></br>
+
 #### Dynamic indexing
 Dynamic indexing is a technique where the index is updated dynamically as new documents are added to the system. In other words, the index is built on the fly, and it is not necessary to rebuild the entire index each time a new document is added. In this code, the `dynamicIndex` class implements dynamic indexing.
 The `dynamicIndex` class has two main functions, `addDocument()` and `search()`. The `addDocument()` function adds a new document to the system and updates the inverted index accordingly. The inverted index is a data structure that stores the mapping between terms and the documents that contain them. In this implementation, the inverted index is implemented as a dictionary where each term is mapped to a set of document IDs. When a new document is added, the `addDocument()` function splits the document text into individual terms and adds the document ID to the corresponding set in the inverted index.
 ###### search() function
 The `search()` function takes a query as input and returns a list of relevant documents sorted by their relevance score. The relevance score is calculated by counting the number of query terms that appear in each document. To find the relevant documents, the `search()` function looks up each query term in the inverted index and retrieves the set of documents that contain the term. The function then takes the union of these sets to get a set of relevant documents. Finally, the function calculates the relevance score for each relevant document and returns a list of documents sorted by their relevance scores.
 
-<br>
-<br>
+<br></br>
+
 #### Term-Partitioned indexing
 Term-partitioned indexing is a technique where the index is partitioned into multiple parts based on the terms that occur in the documents. In this technique, the documents are distributed across multiple machines based on the terms they contain. Each machine is responsible for indexing and searching the documents that contain a specific subset of terms. In this code, the `termPartitionedIndex` class implements term-partitioned indexing.
 The `termPartitionedIndex` class has three main functions, `__init__()`, `addDocument()`, and `search()`. The `__init__()` function initializes the class and creates the inverted index. The inverted index is implemented as a list of dictionaries, where each dictionary represents the inverted index for a subset of terms. The number of dictionaries in the list is equal to the number of machines used in the system.
@@ -63,8 +64,8 @@ The `addDocument()` function adds a new document to the system and updates the i
 ###### search() function
 The `search()` function takes a query as input and returns a list of relevant documents sorted by their relevance score. The function first determines which subset of terms the query belongs to by hashing each query term and using the hash value to determine the corresponding subset of terms. The function then retrieves the set of relevant documents from the inverted index for that subset of terms. Finally, the function calculates the relevance score for each relevant document and returns a list of documents sorted by their relevance scores.
 
-<br>
-<br>
+<br></br>
+
 ## What is NOZ?
 NOZ is a text searching app that implements two types of indexing, dynamic indexing and term-partitioned indexing. With a graphical user interface (GUI), users can scan through text documents by selecting a few documents or scanning an entire directory for text documents. NOZ then searches for a query in these documents and returns the documents in order of relevance. Users can ask for more than one query at a time.
 #### NOZ's key features
@@ -74,8 +75,8 @@ NOZ is a text searching app that implements two types of indexing, dynamic index
 
 NOZ is a powerful text searching app that implements two types of indexing and provides users with a range of user-friendly features. With its GUI, ability to search through different types of documents, and security features, NOZ is a useful tool for anyone who needs to search for information quickly and efficiently.
 
-<br>
-<br>
+<br></br>
+
 ## How do I make NOZ run on my device?
 #### You will require the following Python modules installed in order to run NOZ:
 - os
