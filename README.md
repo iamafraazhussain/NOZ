@@ -11,11 +11,11 @@ The working of distributed indexing involves the following steps:
 - Query processing: When a query is issued, it is sent to all the nodes in the system. Each node processes the query using its local index and returns the results to the query coordinator. The coordinator then merges the results from all the nodes and returns the final result to the user.
 
 The advantage of distributed indexing is that it allows for the efficient processing of large-scale data sets by distributing the work across multiple machines. This reduces the amount of time required to build and search the index, and also increases the scalability and fault-tolerance of the system.
-
+<br>
 #### Distributed indexing using Dynamic indexing
 Dynamic indexing is a type of distributed indexing that allows for real-time indexing and querying of data as it is added or removed from the system. In dynamic indexing, documents are partitioned into smaller subsets, and each subset is indexed by a separate node in the network. As new documents are added or removed, the system automatically reorganizes the partitions and updates the indexes in real-time, allowing for immediate searchability of the newly added documents.
 By using dynamic distributed indexing, it is possible to create a highly scalable and efficient system for indexing and searching large collections of documents. This approach allows for real-time updates and immediate searchability of new documents, making it ideal for applications such as search engines, e-commerce sites, and social media platforms.
-
+<br>
 ###### Working of Dynamic indexing
 - Partitioning: The documents are partitioned into smaller subsets, and each subset is assigned to a separate node in the network.
 - Indexing: Each node indexes the documents in its subset, creating a local index for that subset.
