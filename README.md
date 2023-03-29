@@ -1,6 +1,6 @@
 # NOZ
 
-##Distributed indexing
+## Distributed indexing
 Distributed indexing is a technique used to build and maintain an index of information across multiple computers or nodes, rather than on a single machine. In a distributed system, the index is partitioned and distributed among different nodes or machines, which allows the index to be built, maintained and searched more efficiently and effectively.
 
 The working of distributed indexing involves the following steps:
@@ -13,22 +13,22 @@ The working of distributed indexing involves the following steps:
 
 The advantage of distributed indexing is that it allows for the efficient processing of large-scale data sets by distributing the work across multiple machines. This reduces the amount of time required to build and search the index, and also increases the scalability and fault-tolerance of the system.
 
-####Distributed indexing using Dynamic indexing
+#### Distributed indexing using Dynamic indexing
 Dynamic indexing is a type of distributed indexing that allows for real-time indexing and querying of data as it is added or removed from the system. In dynamic indexing, documents are partitioned into smaller subsets, and each subset is indexed by a separate node in the network. As new documents are added or removed, the system automatically reorganizes the partitions and updates the indexes in real-time, allowing for immediate searchability of the newly added documents.
 By using dynamic distributed indexing, it is possible to create a highly scalable and efficient system for indexing and searching large collections of documents. This approach allows for real-time updates and immediate searchability of new documents, making it ideal for applications such as search engines, e-commerce sites, and social media platforms.
 
-######Working of Dynamic indexing
+###### Working of Dynamic indexing
 - Partitioning: The documents are partitioned into smaller subsets, and each subset is assigned to a separate node in the network.
 - Indexing: Each node indexes the documents in its subset, creating a local index for that subset.
 - Merging: The local indexes are merged periodically to create a global index that includes all the documents in the collection.
 - Querying: Queries are sent to the nodes in the network, and each node returns a list of documents that match the query. These results are combined to create a final list of matching documents.
 - Updating: When new documents are added or removed from the collection, the system automatically reorganizes the partitions and updates the indexes in real-time.
 
-####Distributed indexing using Term-Partitioned indexing
+#### Distributed indexing using Term-Partitioned indexing
 Distributed indexing based on term-partitioned indexing is a technique used to distribute the indexing workload across multiple machines or nodes in a distributed system. In this approach, the index is partitioned into smaller subsets called term partitions. Each term partition is stored on a separate machine or node in the distributed system.
 The basic idea behind term-partitioned indexing is to divide the document collection into smaller subsets and create a local index for each subset. A global index is then created by merging the local indexes of each subset. The local indexes are updated incrementally as new documents are added to the document collection. This approach provides scalability and improves the indexing and search performance of the system.
 
-######Working of Term-Partitioned indexing
+###### Working of Term-Partitioned indexing
 - The document collection is divided into subsets based on some partitioning scheme. For example, a simple scheme could be to divide the documents based on their document ID or some other metadata.
 - Each subset of documents is indexed separately using a local index. The local index is stored on a separate machine or node in the distributed system. The local index contains a subset of the terms in the document collection and the frequency of occurrence of each term in the subset of documents.
 - Once all the local indexes are created, they are merged to create a global index. The global index contains all the terms in the document collection and the frequency of occurrence of each term in the entire document collection.
