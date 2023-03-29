@@ -87,9 +87,7 @@ NOZ is a powerful text searching app that implements two types of indexing and p
 - webbrowser
 - PyQt6
 
-<br></br>
-
-######Run the following commands in your Python terminal to install the mentioned modules
+Run the following commands in your Python terminal to install the mentioned modules
 - ```pip install PyQt6```
 - ```pip install re```
 - ```pip install tkinter```
