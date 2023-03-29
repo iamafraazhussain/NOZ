@@ -1,5 +1,4 @@
-<p align = 'center'> <img src = 'https://user-images.githubusercontent.com/46090374/228615403-9de1ac85-56b7-44ce-af27-c2446deae9c9.png' height = '200px'></p>
-
+<p align = 'center'> <img src = 'https://user-images.githubusercontent.com/46090374/228617114-7da5de4a-9f97-477c-876b-9427e32e000d.png'></p>
 
 ## Distributed indexing
 Distributed indexing is a technique used to build and maintain an index of information across multiple computers or nodes, rather than on a single machine. In a distributed system, the index is partitioned and distributed among different nodes or machines, which allows the index to be built, maintained and searched more efficiently and effectively.
