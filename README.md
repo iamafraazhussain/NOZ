@@ -4,7 +4,6 @@
 Distributed indexing is a technique used to build and maintain an index of information across multiple computers or nodes, rather than on a single machine. In a distributed system, the index is partitioned and distributed among different nodes or machines, which allows the index to be built, maintained and searched more efficiently and effectively.
 
 The working of distributed indexing involves the following steps:
-
 - Partitioning: The first step in distributed indexing is to partition the data that needs to be indexed. This partitioning can be done based on any criteria such as geographical location, data type, or any other logical grouping.
 - Indexing: Once the data is partitioned, each node in the system builds an index for its own partition of the data. This can be done using any indexing technique such as inverted indexing, hash-based indexing, or B-tree indexing.
 - Merging: The indexes built by each node are then merged into a single global index. This can be done in different ways depending on the application and the indexing technique used.
