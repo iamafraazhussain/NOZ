@@ -1,4 +1,7 @@
-# NOZ
+<p align = "center">
+            ![Logo with glow](https://user-images.githubusercontent.com/46090374/228615403-9de1ac85-56b7-44ce-af27-c2446deae9c9.png)
+</p>
+
 
 ## Distributed indexing
 Distributed indexing is a technique used to build and maintain an index of information across multiple computers or nodes, rather than on a single machine. In a distributed system, the index is partitioned and distributed among different nodes or machines, which allows the index to be built, maintained and searched more efficiently and effectively.
