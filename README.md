@@ -24,8 +24,8 @@ By using dynamic distributed indexing, it is possible to create a highly scalabl
 - Querying: Queries are sent to the nodes in the network, and each node returns a list of documents that match the query. These results are combined to create a final list of matching documents.
 - Updating: When new documents are added or removed from the collection, the system automatically reorganizes the partitions and updates the indexes in real-time.
 
-<br>
-<br>
+<br></br>
+<br></br>
 #### Distributed indexing using Term-Partitioned indexing ####
 Distributed indexing based on term-partitioned indexing is a technique used to distribute the indexing workload across multiple machines or nodes in a distributed system. In this approach, the index is partitioned into smaller subsets called term partitions. Each term partition is stored on a separate machine or node in the distributed system.
 The basic idea behind term-partitioned indexing is to divide the document collection into smaller subsets and create a local index for each subset. A global index is then created by merging the local indexes of each subset. The local indexes are updated incrementally as new documents are added to the document collection. This approach provides scalability and improves the indexing and search performance of the system.
